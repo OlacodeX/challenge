@@ -4,12 +4,12 @@ namespace App\Enums;
 
 enum AuditAction: string
 {
-    case ContactRevealed = 'contact_revealed';
+    case CONTACT_REVEALED = 'contact_revealed';
 
     public function label(): string
     {
         return match ($this) {
-            self::ContactRevealed => 'Contact Revealed',
+            self::CONTACT_REVEALED => 'Contact Revealed',
         };
     }
 }

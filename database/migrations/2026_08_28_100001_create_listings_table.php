@@ -11,18 +11,20 @@ return new class extends Migration
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
             $table->integer('seller_id')->index();
-            $table->string('title')->index();
+            $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
             $table->string('category')->index();
-            $table->integer('price');
-            $table->string('currency')->index();
+            $table->integer('price')->index();
+            $table->string('currency');
             $table->string('country')->index();
-            $table->string('city')->index();
+            $table->string('city');
             $table->date('date_online');
             $table->date('date_offline');
             $table->string('status');
             $table->timestamps();
+
+            $table->index(['status', 'date_online', 'date_offline']);
         });
     }
 

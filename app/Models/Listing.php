@@ -6,6 +6,7 @@ use App\Enums\Country;
 use App\Enums\Currency;
 use App\Enums\ListingCategory;
 use App\Enums\ListingStatus;
+use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
-    use HasFactory;
+    use HasFactory, Sluggable;
 
     protected $fillable = [
         'seller_id',
@@ -53,6 +54,22 @@ class Listing extends Model
             get: fn ($value) => $value / 100,
             set: fn ($value) => $value * 100,
         );
+    }
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title',
+                'unique' => true,
+                'onUpdate' => false,
+            ],
+        ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     public function audits(): MorphMany

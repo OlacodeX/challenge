@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\KybStatus;
-use App\Models\Listing;
 use App\Models\Seller;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -45,14 +44,6 @@ class SellerSeeder extends Seeder
             'kyb_status' => KybStatus::PENDING,
         ]);
 
-        Seller::factory()
-            ->count(3)
-            ->verified()
-            ->has(
-                Listing::factory()
-                    ->count(8)
-                    ->publishedInWindow()
-            )
-            ->create();
+        Seller::factory()->count(3)->verified()->create();
     }
 }

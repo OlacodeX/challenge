@@ -9,7 +9,6 @@ use App\Enums\ListingStatus;
 use App\Models\Listing;
 use App\Models\Seller;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Listing>
@@ -27,7 +26,6 @@ class ListingFactory extends Factory
         return [
             'seller_id' => Seller::factory(),
             'title' => $title,
-            'slug' => Str::slug($title).'-'.fake()->unique()->numerify('####'),
             'description' => fake()->paragraphs(3, true),
             'category' => fake()->randomElement(ListingCategory::cases()),
             'price' => fake()->randomFloat(2, 5000, 2500000),

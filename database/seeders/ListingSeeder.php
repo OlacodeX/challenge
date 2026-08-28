@@ -13,6 +13,11 @@ class ListingSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    private const DEMO_SELLER_EMAILS = [
+        'verified@kinkoza.test',
+        'unverified@kinkoza.test',
+    ];
+
     public function run(): void
     {
         Schema::disableForeignKeyConstraints();
@@ -33,6 +38,16 @@ class ListingSeeder extends Seeder
         Listing::factory()->count(15)->publishedInWindow()->create(['seller_id' => $unverifiedSeller->id]);
         Listing::factory()->count(8)->draft()->create(['seller_id' => $unverifiedSeller->id]);
         Listing::factory()->count(5)->pendingReview()->create(['seller_id' => $unverifiedSeller->id]);
+
+        Seller::query()
+            ->whereHas('user', fn ($query) => $query->whereNotIn('email', [
+                ...self::DEMO_SELLER_EMAILS,
+                'buyer@kinkoza.test',
+            ]))
+            ->each(fn (Seller $seller) => Listing::factory()
+                ->count(8)
+                ->publishedInWindow()
+                ->create(['seller_id' => $seller->id]));
     }
 
     private function sellerForUser(string $email): Seller
