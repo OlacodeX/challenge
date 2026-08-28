@@ -22,7 +22,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <x-auth-header title="Welcome back" subtitle="Sign in to your account" />
+    <x-auth-header :title="__('Welcome back')" :subtitle="__('Sign in to your account')" />
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

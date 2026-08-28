@@ -46,7 +46,7 @@ class CreateListing extends Component
     {
         CreateListingAction::run(Auth::user()->seller, $this->validatedListingData());
 
-        session()->flash('status', 'Listing saved as draft.');
+        session()->flash('status', __('marketplace.listing_saved_draft'));
 
         $this->redirect(route('listings.manage'), navigate: true);
     }
@@ -63,7 +63,7 @@ class CreateListing extends Component
             PublishListing::run($listing);
         });
 
-        session()->flash('status', 'Listing published.');
+        session()->flash('status', __('marketplace.listing_published'));
 
         $this->redirect(route('listings.manage'), navigate: true);
     }

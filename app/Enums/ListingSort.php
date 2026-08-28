@@ -13,12 +13,7 @@ enum ListingSort: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::PRICE_ASC => 'Price: Low to High',
-            self::PRICE_DESC => 'Price: High to Low',
-            self::NEWEST => 'Newest',
-            self::OLDEST => 'Oldest',
-        };
+        return __('enums.listing_sort.'.$this->value);
     }
 
     public static function fromRequest(?string $value): self

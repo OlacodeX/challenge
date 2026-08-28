@@ -7,6 +7,13 @@ use App\Livewire\ShowListing;
 use App\Models\Listing;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/locale/{locale}', function (string $locale) {
+
+    session(['locale' => $locale]);
+
+    return back();
+})->name('locale.switch');
+
 Route::livewire('/', ListingSearch::class)->name('home');
 
 Route::livewire('/listings/create', CreateListing::class)

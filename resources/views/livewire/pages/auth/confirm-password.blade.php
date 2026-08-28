@@ -34,7 +34,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <x-auth-header title="Confirm password" subtitle="Please enter your password to continue" />
+    <x-auth-header :title="__('Confirm password')" :subtitle="__('Please enter your password to continue')" />
 
     <form wire:submit="confirmPassword" class="space-y-4">
         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -39,6 +40,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Audit::class);
     }
 
+    /**
+     * @return HasOne<Seller, $this>
+     */
     public function seller(): HasOne
     {
         return $this->hasOne(Seller::class);
