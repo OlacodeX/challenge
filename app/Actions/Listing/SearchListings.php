@@ -48,12 +48,12 @@ class SearchListings
             ->when($title, fn (Builder $query) => $query->where('title', 'like', '%'.$title.'%'))
             ->when(ListingCategory::tryFrom($category), fn (Builder $query, ListingCategory $category) => $query->where('category', $category))
             ->when(Country::tryFrom($country), fn (Builder $query, Country $country) => $query->where('country', $country))
-            ->when($minPrice, fn (Builder $query) => $query->where('price', '>=', (int) round($minPrice * 100)))
-            ->when($maxPrice, fn (Builder $query) => $query->where('price', '<=', (int) round($maxPrice * 100)));
+            ->when($minPrice, fn (Builder $query) => $query->where('price', '>=', $minPrice * 100))
+            ->when($maxPrice, fn (Builder $query) => $query->where('price', '<=', $maxPrice * 100));
 
         ListingSort::fromRequest($sort)->applyToQuery($query);
 
-        return $query->paginate(12, ['*'], 'page', $page)->withQueryString();
+        return $query->paginate(12, page: $page)->withQueryString();
     }
 
     public function filterOptionCounts(): array
@@ -64,12 +64,14 @@ class SearchListings
             $categories = (clone $base)
                 ->selectRaw('category, count(*) as aggregate')
                 ->groupBy('category')
-                ->pluck('aggregate', 'category');
+                ->pluck('aggregate', 'category')
+                ->all();
 
             $countries = (clone $base)
                 ->selectRaw('country, count(*) as aggregate')
                 ->groupBy('country')
-                ->pluck('aggregate', 'country');
+                ->pluck('aggregate', 'country')
+                ->all();
 
             return [
                 'categories' => $categories,

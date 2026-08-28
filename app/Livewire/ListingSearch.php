@@ -41,6 +41,17 @@ class ListingSearch extends Component
         }
     }
 
+    public function clearFilters(): void
+    {
+        $this->title = '';
+        $this->category = '';
+        $this->country = '';
+        $this->minPrice = '';
+        $this->maxPrice = '';
+        $this->sort = 'newest';
+        $this->page = 1;
+    }
+
     public function render()
     {
         return view('livewire.listing-search', [
