@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Listing\SearchListings;
 use App\Enums\Country;
 use App\Enums\Currency;
 use App\Enums\ListingCategory;
@@ -15,11 +16,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property Carbon $date_online
+ * @property Carbon $date_offline
+ */
 class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
     use HasFactory, Sluggable;
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
+        static::deleted(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
+    }
 
     protected $fillable = [
         'seller_id',

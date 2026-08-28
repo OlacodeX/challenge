@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Database\Eloquent\Builder;
+
 enum ListingSort: string
 {
     case PRICE_ASC = 'price_asc';
@@ -22,5 +24,15 @@ enum ListingSort: string
     public static function fromRequest(?string $value): self
     {
         return self::tryFrom((string) $value) ?? self::NEWEST;
+    }
+
+    public function applyToQuery(Builder $query): Builder
+    {
+        return match ($this) {
+            self::PRICE_ASC => $query->orderBy('price'),
+            self::PRICE_DESC => $query->orderByDesc('price'),
+            self::NEWEST => $query->orderByDesc('created_at'),
+            self::OLDEST => $query->orderBy('created_at'),
+        };
     }
 }
