@@ -1,6 +1,8 @@
 <?php
 
+use App\Livewire\Layout\Navigation;
 use App\Models\User;
+use Livewire\Livewire;
 use Livewire\Volt\Volt;
 
 test('login screen can be rendered', function () {
@@ -52,7 +54,7 @@ test('navigation menu can be rendered', function () {
 
     $response
         ->assertOk()
-        ->assertSeeVolt('layout.navigation');
+        ->assertSeeLivewire(Navigation::class);
 });
 
 test('users can logout', function () {
@@ -60,11 +62,8 @@ test('users can logout', function () {
 
     $this->actingAs($user);
 
-    $component = Volt::test('layout.navigation');
-
-    $component->call('logout');
-
-    $component
+    Livewire::test(Navigation::class)
+        ->call('logout')
         ->assertHasNoErrors()
         ->assertRedirect('/');
 
