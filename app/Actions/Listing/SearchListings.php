@@ -27,6 +27,7 @@ class SearchListings
         ?string $sort = null,
         int $page = 1,
     ): LengthAwarePaginator {
+        
         $this->enforceSearchRateLimit();
 
         $query = Listing::query()

@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Actions\Listing\RevealContact;
 use App\Models\Listing;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -21,10 +21,6 @@ class ShowListing extends Component
 
     public function mount(Listing $listing): void
     {
-        if (! Gate::allows('view', $listing)) {
-            abort(404);
-        }
-
         $this->listing = $listing->loadMissing('seller:id,company_name,user_id');
     }
 
@@ -32,7 +28,7 @@ class ShowListing extends Component
     {
         $this->authorize('revealContact', $this->listing);
 
-        $contact = RevealContact::run($this->listing, auth()->user());
+        $contact = RevealContact::run($this->listing, Auth::user());
 
         $this->revealedEmail = $contact['email'];
         $this->revealedPhone = $contact['phone'];

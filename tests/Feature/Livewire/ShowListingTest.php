@@ -15,11 +15,11 @@ it('shows a published listing', function () {
         ->assertDontSee($listing->seller->contact_email, false);
 });
 
-it('returns not found for unpublished listings', function () {
+it('forbids viewing unpublished listings', function () {
     $listing = Listing::factory()->draft()->create();
 
     $this->get(route('listings.show', $listing))
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
 it('does not expose seller contact in page source before reveal', function () {

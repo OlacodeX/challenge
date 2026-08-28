@@ -8,7 +8,6 @@ use App\Enums\Currency;
 use App\Enums\ListingCategory;
 use App\Enums\ListingStatus;
 use Cviebrock\EloquentSluggable\Sluggable;
-use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;

@@ -18,7 +18,7 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-50">
-            <livewire:layout.marketplace-navigation />
+            <livewire:layout.navigation />
 
             <main class="pb-12">
                 {{ $slot }}

@@ -5,7 +5,7 @@ namespace App\Livewire\Layout;
 use App\Livewire\Actions\Logout;
 use Livewire\Component;
 
-class MarketplaceNavigation extends Component
+class Navigation extends Component
 {
     public function logout(Logout $logout): void
     {
@@ -16,6 +16,6 @@ class MarketplaceNavigation extends Component
 
     public function render()
     {
-        return view('livewire.layout.marketplace-navigation');
+        return view('livewire.layout.navigation');
     }
 }
