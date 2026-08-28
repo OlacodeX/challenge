@@ -2,10 +2,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <div class="shrink-0 flex items-center gap-3">
-                    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3">
-                        <x-application-logo class="block h-9 w-auto fill-current text-indigo-600" />
-                        <span class="hidden sm:block text-lg font-bold text-gray-900 tracking-tight">{{ config('app.name', 'Kinkoza') }}</span>
+                <div class="shrink-0 flex items-center">
+                    <a href="{{ route('home') }}" wire:navigate class="text-lg font-bold text-gray-900 tracking-tight">
+                        {{ config('app.name', 'Kinkoza') }}
                     </a>
                 </div>
 

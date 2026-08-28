@@ -26,10 +26,10 @@ class RevealContact
         $userAgent = request()->userAgent();
 
         RecordAudit::dispatch(
-            action: AuditAction::CONTACT_REVEALED,
-            user: $user,
-            auditable: $listing,
-            metadata: [
+            AuditAction::CONTACT_REVEALED,
+            $user,
+            $listing,
+            [
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
             ],
