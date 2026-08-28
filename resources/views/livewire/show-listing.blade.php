@@ -73,19 +73,15 @@
                     @else
                         <div class="mt-4">
                             @auth
-                                @can('revealContact', $listing)
-                                    <button
-                                        type="button"
-                                        wire:click="revealContact"
-                                        wire:loading.attr="disabled"
-                                        class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-50 transition {{ $listing->category->primaryButtonClasses() }}"
-                                    >
-                                        <span wire:loading.remove wire:target="revealContact">Reveal contact details</span>
-                                        <span wire:loading wire:target="revealContact">Revealing…</span>
-                                    </button>
-                                @else
-                                    <p class="text-sm text-gray-600">You cannot reveal contact details for your own listing.</p>
-                                @endcan
+                                <button
+                                    type="button"
+                                    wire:click="revealContact"
+                                    wire:loading.attr="disabled"
+                                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-50 transition {{ $listing->category->primaryButtonClasses() }}"
+                                >
+                                    <span wire:loading.remove wire:target="revealContact">Reveal contact details</span>
+                                    <span wire:loading wire:target="revealContact">Revealing…</span>
+                                </button>
                             @else
                                 <a
                                     href="{{ route('login') }}"

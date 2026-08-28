@@ -3,11 +3,13 @@
 namespace App\Livewire;
 
 use App\Actions\Listing\CreateListing as CreateListingAction;
+use App\Actions\Listing\PublishListing;
 use App\Enums\Country;
 use App\Enums\Currency;
 use App\Enums\ListingCategory;
 use App\Http\Requests\StoreListingRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -42,13 +44,28 @@ class CreateListing extends Component
 
     public function save(): void
     {
-        $validated = $this->validate((new StoreListingRequest)->rules());
+        CreateListingAction::run(Auth::user()->seller, $this->validatedListingData());
 
-        CreateListingAction::run(Auth::user()->seller, $validated);
+        session()->flash('status', 'Listing saved as draft.');
 
-        session()->flash('status', 'Listing saved and will be reviewed by our team.');
+        $this->redirect(route('listings.manage'), navigate: true);
+    }
 
-        $this->redirect(route('dashboard'), navigate: true);
+    public function saveAndPublish(): void
+    {
+        $validated = $this->validatedListingData();
+
+        DB::transaction(function () use ($validated): void {
+            $listing = CreateListingAction::run(Auth::user()->seller, $validated);
+
+            $this->authorize('publish', $listing);
+
+            PublishListing::run($listing);
+        });
+
+        session()->flash('status', 'Listing published.');
+
+        $this->redirect(route('listings.manage'), navigate: true);
     }
 
     public function render()
@@ -59,5 +76,13 @@ class CreateListing extends Component
             'currencies' => Currency::cases(),
             'seller' => Auth::user()->seller,
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedListingData(): array
+    {
+        return $this->validate((new StoreListingRequest)->rules());
     }
 }

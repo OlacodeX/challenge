@@ -15,6 +15,10 @@
 
                     @auth
                         @can('create', App\Models\Listing::class)
+                            <x-nav-link :href="route('listings.manage')" :active="request()->routeIs('listings.manage')" wire:navigate>
+                                {{ __('My listings') }}
+                            </x-nav-link>
+
                             <x-nav-link :href="route('listings.create')" :active="request()->routeIs('listings.create')" wire:navigate>
                                 {{ __('Create listing') }}
                             </x-nav-link>
@@ -86,6 +90,10 @@
 
             @auth
                 @can('create', App\Models\Listing::class)
+                    <x-responsive-nav-link :href="route('listings.manage')" :active="request()->routeIs('listings.manage')" wire:navigate>
+                        {{ __('My listings') }}
+                    </x-responsive-nav-link>
+
                     <x-responsive-nav-link :href="route('listings.create')" :active="request()->routeIs('listings.create')" wire:navigate>
                         {{ __('Create listing') }}
                     </x-responsive-nav-link>

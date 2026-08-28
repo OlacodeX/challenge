@@ -1,10 +1,10 @@
 <div class="py-10 sm:py-12">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <a href="{{ route('dashboard') }}" wire:navigate class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition mb-6">
+        <a href="{{ route('listings.manage') }}" wire:navigate class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition mb-6">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
-            Back to dashboard
+            Back to my listings
         </a>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
@@ -14,7 +14,7 @@
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Create listing</h1>
                 <p class="mt-1 text-sm text-gray-500">Save a draft listing. Publishing requires verified seller status.</p>
 
-                <form wire:submit="save" class="mt-8 space-y-8">
+                <form wire:submit.prevent="save" class="mt-8 space-y-8">
                     <section class="space-y-4">
                         <h2 class="text-base font-semibold text-gray-900">Listing details</h2>
 
@@ -115,13 +115,13 @@
                                 <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">Contact phone</dt>
                                 <dd class="mt-1 font-semibold text-gray-900">{{ $seller->contact_phone }}</dd>
                             </div>
-                            @if ($seller->vat_number)
+                            @if (filled($seller->getAttributes()['vat_number'] ?? null))
                                 <div>
                                     <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">VAT number</dt>
                                     <dd class="mt-1 font-semibold text-gray-900">{{ $seller->vat_number }}</dd>
                                 </div>
                             @endif
-                            @if ($seller->registration_number)
+                            @if (filled($seller->getAttributes()['registration_number'] ?? null))
                                 <div>
                                     <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">Registration number</dt>
                                     <dd class="mt-1 font-semibold text-gray-900">{{ $seller->registration_number }}</dd>
@@ -130,10 +130,18 @@
                         </dl>
                     </section>
 
-                    <div class="flex justify-end border-t border-gray-100 pt-6">
+                    <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-gray-100 pt-6">
                         <x-primary-button class="w-full sm:w-auto">
                             Save draft
                         </x-primary-button>
+
+                        <button
+                            type="button"
+                            wire:click="saveAndPublish"
+                            class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 transition w-full sm:w-auto"
+                        >
+                            Save and publish
+                        </button>
                     </div>
                 </form>
             </div>

@@ -33,7 +33,10 @@ class ListingPolicy
     {
         $seller = $user->seller;
 
-        return $this->ownsListing($user, $listing) && $seller instanceof Seller && $seller->isVerified();
+        return $listing->status === ListingStatus::DRAFT
+            && $this->ownsListing($user, $listing)
+            && $seller instanceof Seller
+            && $seller->isVerified();
     }
 
     public function revealContact(User $user, Listing $listing): bool

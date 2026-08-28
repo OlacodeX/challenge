@@ -1,10 +1,11 @@
 <?php
 
-use App\Actions\Audit\RecordAudit;
 use App\Livewire\ShowListing;
 use App\Models\Listing;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
+use Lorisleiva\Actions\Decorators\JobDecorator;
 
 it('shows a published listing', function () {
     $listing = Listing::factory()->publishedInWindow()->create();
@@ -52,7 +53,7 @@ it('forbids owners from revealing their own contact', function () {
 });
 
 it('reveals contact for authenticated buyers and dispatches an audit job', function () {
-    RecordAudit::fake();
+    Queue::fake();
 
     $listing = Listing::factory()->publishedInWindow()->create();
     $buyer = User::factory()->create();
@@ -66,5 +67,5 @@ it('reveals contact for authenticated buyers and dispatches an audit job', funct
         ->assertSee($email)
         ->assertSee($phone);
 
-    RecordAudit::assertPushed();
+    Queue::assertPushed(JobDecorator::class);
 });

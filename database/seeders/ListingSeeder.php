@@ -35,7 +35,6 @@ class ListingSeeder extends Seeder
         Listing::factory()->count(5)->expired()->create(['seller_id' => $verifiedSeller->id]);
         Listing::factory()->count(4)->pendingReview()->create(['seller_id' => $verifiedSeller->id]);
 
-        Listing::factory()->count(15)->publishedInWindow()->create(['seller_id' => $unverifiedSeller->id]);
         Listing::factory()->count(8)->draft()->create(['seller_id' => $unverifiedSeller->id]);
         Listing::factory()->count(5)->pendingReview()->create(['seller_id' => $unverifiedSeller->id]);
 

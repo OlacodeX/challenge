@@ -58,7 +58,7 @@ it('creates a draft listing for an authenticated seller', function () {
         ->set('date_offline', now()->addMonths(3)->toDateString())
         ->call('save')
         ->assertHasNoErrors()
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('listings.manage'));
 
     $listing = Listing::query()->where('title', 'Warehouse Forklift Fleet')->first();
 
@@ -70,6 +70,50 @@ it('creates a draft listing for an authenticated seller', function () {
     $seller->refresh();
 
     expect($seller->company_name)->toBe('Acme Logistics BV');
+});
+
+it('creates and publishes a listing for a verified seller', function () {
+    $seller = Seller::factory()->verified()->create();
+
+    Livewire::actingAs($seller->user)
+        ->test(CreateListing::class)
+        ->set('title', 'Immediate Publish Asset')
+        ->set('description', 'Ready for the marketplace today.')
+        ->set('category', 'machinery_equipment')
+        ->set('price', '75000')
+        ->set('currency', 'eur')
+        ->set('country', 'be')
+        ->set('city', 'Brussels')
+        ->set('date_online', now()->toDateString())
+        ->set('date_offline', now()->addMonths(3)->toDateString())
+        ->call('saveAndPublish')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('listings.manage'));
+
+    $listing = Listing::query()->where('title', 'Immediate Publish Asset')->first();
+
+    expect($listing)->not->toBeNull()
+        ->and($listing->status)->toBe(ListingStatus::PUBLISHED);
+});
+
+it('forbids unverified sellers from publishing on create', function () {
+    $seller = Seller::factory()->create();
+
+    Livewire::actingAs($seller->user)
+        ->test(CreateListing::class)
+        ->set('title', 'Blocked Publish Asset')
+        ->set('description', 'Should stay a draft.')
+        ->set('category', 'intangible_assets')
+        ->set('price', '10000')
+        ->set('currency', 'eur')
+        ->set('country', 'lu')
+        ->set('city', 'Luxembourg')
+        ->set('date_online', now()->toDateString())
+        ->set('date_offline', now()->addMonths(3)->toDateString())
+        ->call('saveAndPublish')
+        ->assertForbidden();
+
+    expect(Listing::query()->where('title', 'Blocked Publish Asset')->exists())->toBeFalse();
 });
 
 it('validates required listing fields', function () {
