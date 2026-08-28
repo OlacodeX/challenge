@@ -173,20 +173,11 @@
                     @else
                         <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                             @foreach ($listings as $listing)
-                                @php
-                                    $accent = match ($listing->category->value) {
-                                        'machinery_equipment' => 'from-slate-500 to-slate-700',
-                                        'vehicles_fleet' => 'from-blue-500 to-blue-700',
-                                        'commercial_property' => 'from-emerald-500 to-emerald-700',
-                                        'intangible_assets' => 'from-violet-500 to-violet-700',
-                                        default => 'from-indigo-500 to-indigo-700',
-                                    };
-                                @endphp
-                                <article class="group bg-white rounded-xl border border-gray-200/80 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 overflow-hidden flex flex-col">
-                                    <div class="h-2 bg-gradient-to-r {{ $accent }}"></div>
+                                <article class="group bg-white rounded-xl border border-gray-200/80 shadow-sm hover:shadow-md {{ $listing->category->cardBorderHoverClass() }} transition-all duration-200 overflow-hidden flex flex-col">
+                                    <div class="h-2 bg-gradient-to-r {{ $listing->category->accentGradient() }}"></div>
                                     <div class="p-5 flex-1 flex flex-col">
                                         <div class="flex items-start justify-between gap-2">
-                                            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">
+                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset {{ $listing->category->badgeClasses() }}">
                                                 {{ $listing->category->label() }}
                                             </span>
                                             <span class="shrink-0 text-xs font-medium text-gray-400 uppercase tracking-wide">
@@ -194,8 +185,8 @@
                                             </span>
                                         </div>
 
-                                        <h2 class="mt-3 text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">
-                                            <a href="{{ url('/listings/'.$listing->slug) }}" wire:navigate>
+                                        <h2 class="mt-3 text-base font-semibold text-gray-900 line-clamp-2 {{ $listing->category->cardTitleHoverClass() }} transition-colors">
+                                            <a href="{{ route('listings.show', $listing) }}" wire:navigate>
                                                 {{ $listing->title }}
                                             </a>
                                         </h2>
@@ -218,9 +209,9 @@
                                                 </p>
                                             </div>
                                             <a
-                                                href="{{ url('/listings/'.$listing->slug) }}"
+                                                href="{{ route('listings.show', $listing) }}"
                                                 wire:navigate
-                                                class="shrink-0 inline-flex items-center gap-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:ring-indigo-200 transition"
+                                                class="shrink-0 inline-flex items-center gap-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 {{ $listing->category->cardActionButtonHoverClass() }} transition"
                                             >
                                                 View
                                                 <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

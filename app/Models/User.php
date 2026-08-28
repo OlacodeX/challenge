@@ -14,6 +14,9 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
+/**
+ * @property-read Seller|null $seller
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */

@@ -20,8 +20,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 /**
+ * @property ListingStatus $status
  * @property Carbon $date_online
  * @property Carbon $date_offline
+ * @property-read Seller $seller
  */
 class Listing extends Model
 {
