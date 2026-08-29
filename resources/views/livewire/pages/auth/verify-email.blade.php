@@ -36,7 +36,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <x-auth-header title="Verify your email" subtitle="Check your inbox for a verification link before continuing" />
+    <x-auth-header :title="__('Verify your email')" :subtitle="__('Check your inbox for a verification link before continuing')" />
 
     @if (session('status') == 'verification-link-sent')
         <div class="mb-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 ring-1 ring-emerald-600/10">

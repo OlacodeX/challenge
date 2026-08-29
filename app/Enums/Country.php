@@ -10,11 +10,7 @@ enum Country: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::FR => 'France',
-            self::BE => 'Belgium',
-            self::LU => 'Luxembourg',
-        };
+        return __('enums.country.'.$this->value);
     }
 
     public function code(): string

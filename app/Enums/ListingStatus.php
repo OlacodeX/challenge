@@ -11,11 +11,6 @@ enum ListingStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::DRAFT => 'Draft',
-            self::PENDING_REVIEW => 'Pending Review',
-            self::PUBLISHED => 'Published',
-            self::EXPIRED => 'Expired',
-        };
+        return __('enums.listing_status.'.$this->value);
     }
 }

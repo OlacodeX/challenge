@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\KybStatus;
+use Database\Factories\SellerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

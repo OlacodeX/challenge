@@ -13,22 +13,22 @@ use Livewire\Component;
 #[Layout('layouts.marketplace')]
 class ListingSearch extends Component
 {
-    #[Url(as: 'q', history: true)]
+    #[Url(as: 'q', history: true, except: '')]
     public string $title = '';
 
-    #[Url(history: true)]
+    #[Url(history: true, except: '')]
     public string $category = '';
 
-    #[Url(history: true)]
+    #[Url(history: true, except: '')]
     public string $country = '';
 
-    #[Url(history: true)]
+    #[Url(history: true, except: '')]
     public string $minPrice = '';
 
-    #[Url(history: true)]
+    #[Url(history: true, except: '')]
     public string $maxPrice = '';
 
-    #[Url(history: true)]
+    #[Url(history: true, except: 'newest')]
     public string $sort = 'newest';
 
     #[Url(as: 'page', history: true, except: 1)]

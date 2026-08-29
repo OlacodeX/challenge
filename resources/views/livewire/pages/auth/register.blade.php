@@ -34,7 +34,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <x-auth-header title="Create an account" subtitle="Join the marketplace to buy and sell business assets" />
+    <x-auth-header :title="__('Create an account')" :subtitle="__('Join the marketplace to buy and sell business assets')" />
 
     <form wire:submit="register" class="space-y-4">
         <div>

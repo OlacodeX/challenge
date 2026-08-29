@@ -3,12 +3,12 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My listings</h1>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ __('marketplace.my_listings') }}</h1>
                 <p class="mt-1 text-sm text-gray-500">{{ $seller->company_name }}</p>
             </div>
 
             <a href="{{ route('listings.create') }}" wire:navigate class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition">
-                Create listing
+                {{ __('marketplace.create_listing') }}
             </a>
         </div>
 
@@ -20,19 +20,19 @@
 
         @if (! $seller->isVerified())
             <div class="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
-                Your seller account is pending KYB verification. You can save drafts, but publishing requires verified status.
+                {{ __('marketplace.kyb_pending') }}
             </div>
         @endif
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200/80 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/80">
-                <label for="status" class="sr-only">Filter by status</label>
+                <label for="status" class="sr-only">{{ __('marketplace.filter_by_status') }}</label>
                 <select
                     id="status"
                     wire:model.live="status"
                     class="block w-full sm:w-64 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
                 >
-                    <option value="">All statuses</option>
+                    <option value="">{{ __('marketplace.all_statuses') }}</option>
                     @foreach ($statuses as $option)
                         <option value="{{ $option->value }}">{{ $option->label() }}</option>
                     @endforeach
@@ -41,7 +41,7 @@
 
             @if ($listings->isEmpty())
                 <div class="p-6 text-sm text-gray-500">
-                    No listings match this filter.
+                    {{ __('marketplace.no_listings_for_filter') }}
                 </div>
             @else
                 <ul class="divide-y divide-gray-200">
@@ -61,17 +61,17 @@
                                         <button
                                             type="button"
                                             wire:click="publish({{ $listing->id }})"
-                                            wire:confirm="Publish this listing?"
+                                            wire:confirm="{{ __('marketplace.publish_confirm') }}"
                                             class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition"
                                         >
-                                            Publish
+                                            {{ __('marketplace.publish') }}
                                         </button>
                                         @break
 
                                     @case(ListingStatus::PUBLISHED)
                                         @if ($listing->isWithinPublicationWindow())
                                             <a href="{{ route('listings.show', $listing) }}" wire:navigate class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
-                                                View
+                                                {{ __('marketplace.view') }}
                                             </a>
                                         @endif
                                         @break
@@ -92,12 +92,11 @@
                                     ? 'cursor-not-allowed bg-gray-100 text-gray-400'
                                     : 'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-indigo-600 hover:ring-indigo-300' }}"
                         >
-                            Previous
+                            {{ __('marketplace.previous') }}
                         </button>
 
                         <span class="text-sm text-gray-500">
-                            Page <span class="font-semibold text-gray-900">{{ $listings->currentPage() }}</span>
-                            of <span class="font-semibold text-gray-900">{{ $listings->lastPage() }}</span>
+                            {{ __('marketplace.page_of', ['current' => $listings->currentPage(), 'total' => $listings->lastPage()]) }}
                         </span>
 
                         <button
@@ -109,7 +108,7 @@
                                     ? 'cursor-not-allowed bg-gray-100 text-gray-400'
                                     : 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-500' }}"
                         >
-                            Next
+                            {{ __('marketplace.next') }}
                         </button>
                     </nav>
                 @endif

@@ -70,7 +70,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <x-auth-header title="Choose a new password" subtitle="Enter your email and a new password below" />
+    <x-auth-header :title="__('Choose a new password')" :subtitle="__('Enter your email and a new password below')" />
 
     <form wire:submit="resetPassword" class="space-y-4">
         <div>

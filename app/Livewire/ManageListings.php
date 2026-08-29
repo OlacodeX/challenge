@@ -31,25 +31,30 @@ class ManageListings extends Component
     public function publish(int $listingId): void
     {
         $listing = Listing::query()
-            ->ownedBy(Auth::user()->seller)
+            ->ownedBy($this->seller())
             ->findOrFail($listingId);
 
         $this->authorize('publish', $listing);
 
         PublishListing::run($listing);
 
-        session()->flash('status', 'Listing published.');
+        session()->flash('status', __('marketplace.listing_published'));
     }
 
     public function render()
     {
-        $seller = Auth::user()->seller;
+        $seller = $this->seller();
 
         return view('livewire.manage-listings', [
             'listings' => $this->listingsFor($seller),
             'seller' => $seller,
             'statuses' => ListingStatus::cases(),
         ]);
+    }
+
+    private function seller(): ?Seller
+    {
+        return Auth::user()?->seller;
     }
 
     private function listingsFor(Seller $seller): LengthAwarePaginator

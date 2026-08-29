@@ -11,12 +11,7 @@ enum ListingCategory: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::MACHINERY_EQUIPMENT => 'Machinery & Equipment',
-            self::VEHICLES_FLEET => 'Vehicles & Fleet',
-            self::COMMERCIAL_PROPERTY => 'Commercial Property',
-            self::INTANGIBLE_ASSETS => 'Intangible Assets',
-        };
+        return __('enums.listing_category.'.$this->value);
     }
 
     public function accentGradient(): string
