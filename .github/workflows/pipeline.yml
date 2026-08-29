@@ -3,8 +3,6 @@ name: Pipeline
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 
 jobs:
   pipeline:
@@ -34,6 +32,15 @@ jobs:
       - run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - run: cp .env.example .env && php artisan key:generate
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
 
       - name: Pint
         run: vendor/bin/pint --test
