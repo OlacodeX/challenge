@@ -30,31 +30,16 @@ class SearchListings
 
         $this->enforceSearchRateLimit();
 
-        $query = Listing::query()
-            ->published()
-            ->withinPublicationWindow()
-            ->with('seller:id,company_name')
-            ->select([
-                'id',
-                'seller_id',
-                'title',
-                'slug',
-                'category',
-                'price',
-                'currency',
-                'country',
-                'city',
-                'created_at',
-            ])
-            ->when($title !== '', fn (Builder $query) => $query->whereIn('id', Listing::search($title)->keys()))
-            ->when(ListingCategory::tryFrom($category), fn (Builder $query, ListingCategory $category) => $query->where('category', $category))
-            ->when(Country::tryFrom($country), fn (Builder $query, Country $country) => $query->where('country', $country))
-            ->when($minPrice, fn (Builder $query) => $query->where('price', '>=', $minPrice * 100))
-            ->when($maxPrice, fn (Builder $query) => $query->where('price', '<=', $maxPrice * 100));
+        if ($title !== '') {
+            return Listing::search($title)
+                ->query(fn (Builder $query) => $this->constrainListingSearch($query, $category, $country, $minPrice, $maxPrice, $sort))
+                ->paginate(12, page:$page)
+                ->withQueryString();
+        }
 
-        ListingSort::fromRequest($sort)->applyToQuery($query);
-
-        return $query->paginate(12, page: $page)->withQueryString();
+        return $this->constrainListingSearch(Listing::query(), $category, $country, $minPrice, $maxPrice, $sort)
+            ->paginate(12, page: $page)
+            ->withQueryString();
     }
 
     public function filterOptionCounts(): array
@@ -79,6 +64,44 @@ class SearchListings
                 'countries' => $countries,
             ];
         });
+    }
+
+    /**
+     * @param  Builder<Listing>  $query
+     * @return Builder<Listing>
+     */
+    private function constrainListingSearch(
+        Builder $query,
+        string $category = '',
+        string $country = '',
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        ?string $sort = null,
+    ): Builder {
+        $query
+            ->published()
+            ->withinPublicationWindow()
+            ->with('seller:id,company_name')
+            ->select([
+                'id',
+                'seller_id',
+                'title',
+                'slug',
+                'category',
+                'price',
+                'currency',
+                'country',
+                'city',
+                'created_at',
+            ])
+            ->when(ListingCategory::tryFrom($category), fn (Builder $query, ListingCategory $category) => $query->where('category', $category))
+            ->when(Country::tryFrom($country), fn (Builder $query, Country $country) => $query->where('country', $country))
+            ->when($minPrice, fn (Builder $query) => $query->where('price', '>=', $minPrice * 100))
+            ->when($maxPrice, fn (Builder $query) => $query->where('price', '<=', $maxPrice * 100));
+
+        ListingSort::fromRequest($sort)->applyToQuery($query);
+
+        return $query;
     }
 
     private function enforceSearchRateLimit(): void

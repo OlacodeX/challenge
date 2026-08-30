@@ -269,7 +269,7 @@ Every search starts with:
 | Min / max price | Compared against stored cents (`input * 100`)           |
 
 
-Invalid category/country values are ignored rather than interpolated into SQL. Publication rules stay on Eloquent so drafts cannot leak from a stale index. Empty `q` skips Scout entirely.
+Invalid category/country values are ignored rather than interpolated into SQL. When `q` is set, Scout runs `search()->query()->paginate()` so the engine pages matching IDs first; the `query` callback applies publication window, filters, and sort on Eloquent so drafts cannot leak from a stale index. Empty `q` stays Eloquent-only (no Scout round-trip).
 
 ### Sorting
 
@@ -411,7 +411,7 @@ flowchart TD
 
 ### Full-text search (Scout + Typesense Cloud)
 
-Title search uses Laravel Scout with Typesense. Published listings are indexed (`shouldBeSearchable`); `toSearchableArray` stores string `id`, `title`, and UNIX `created_at`. `SearchListings` keeps one Eloquent query and, when `q` is set, constrains it with `whereIn('id', Listing::search(...)->keys())`. Filters, publication window, sort, and pagination stay Eloquent.
+Title search uses Laravel Scout with Typesense. Published listings are indexed (`shouldBeSearchable`); `toSearchableArray` stores string `id`, `title`, and UNIX `created_at`. When `q` is set, `SearchListings` uses `Listing::search()->query()->paginate()` filters, publication window, and sort stay in the Eloquent `query` callback. Empty `q` is Eloquent-only.
 
 ### CI pipeline
 
