@@ -1,6 +1,6 @@
 # Kinkoza — B2B Marketplace POC
 
-Proof of concept for a pan-European B2B asset marketplace. Three core pages (search, listing detail, create listing), plus bonus features: KYB publish gate, English/French localization, and a CI pipeline.
+Proof of concept for a pan-European B2B asset marketplace. Three core pages (search, listing detail, create listing), plus bonus features: KYB publish gate, English/French localization, CI pipeline, and Scout + Typesense title search.
 
 ## Requirements
 
@@ -13,9 +13,10 @@ Proof of concept for a pan-European B2B asset marketplace. Three core pages (sea
 | npm         | Latest compatible with Node 24 |
 | Composer    | 2.x                            |
 | Git         | 2.x                            |
+| Typesense   | Cloud account (or any Typesense-compatible host) |
 
 
-Tests use SQLite in-memory (`phpunit.xml`). Local development uses MySQL (`DB_CONNECTION=mysql` in `.env.example`).
+Tests use SQLite in-memory (`phpunit.xml`) and Scout’s `collection` driver. Local development uses MySQL (`DB_CONNECTION=mysql` in `.env.example`).
 
 ## Installation
 
@@ -40,14 +41,22 @@ Tests use SQLite in-memory (`phpunit.xml`). Local development uses MySQL (`DB_CO
    php artisan migrate --seed
    ```
 
-6. Install frontend dependencies and build assets:
+6. For live title search, create a [Typesense Cloud](https://cloud.typesense.org/) cluster, set `TYPESENSE_*` and `SCOUT_DRIVER=typesense` in `.env` (host without `https://`; Cloud usually uses port `443` and protocol `https`), then import listings:
+
+   ```bash
+   php artisan scout:import "App\Models\Listing"
+   ```
+
+   Without Typesense credentials, browsing and filters still work; title search needs a reachable Typesense host. You can point the same env vars at a self-hosted Typesense instance later without code changes.
+
+7. Install frontend dependencies and build assets:
 
    ```bash
    npm ci
    npm run build
    ```
 
-7. Start the application:
+8. Start the application:
 
    ```bash
    php artisan serve
@@ -236,6 +245,7 @@ Enforced at:
 - Price attribute accessor (cents in DB, major units in app)
 - `Model::shouldBeStrict()` outside production (`AppServiceProvider`)
 - Sluggable slug from title (`cviebrock/eloquent-sluggable`)
+- Laravel Scout + Typesense for title search (`Searchable` on `Listing`)
 
 ## Search and Query Design
 
@@ -253,13 +263,13 @@ Every search starts with:
 
 | Filter          | Behaviour                                               |
 | --------------- | ------------------------------------------------------- |
-| Title           | `LIKE '%term%'` when non-empty                          |
+| Title           | Laravel Scout (`Listing::search`) when `q` is non-empty |
 | Category        | Applied only when `ListingCategory::tryFrom()` succeeds |
 | Country         | Applied only when `Country::tryFrom()` succeeds         |
 | Min / max price | Compared against stored cents (`input * 100`)           |
 
 
-Invalid category/country values are ignored rather than interpolated into SQL.
+Invalid category/country values are ignored rather than interpolated into SQL. Publication rules stay on Eloquent so drafts cannot leak from a stale index. Empty `q` skips Scout entirely.
 
 ### Sorting
 
@@ -399,9 +409,13 @@ flowchart TD
 - Strings in `lang/fr.json`, `lang/*/marketplace.php`, and `lang/*/enums.php`
 - EN / FR switcher in the marketplace navigation
 
+### Full-text search (Scout + Typesense Cloud)
+
+Title search uses Laravel Scout with Typesense. Published listings are indexed (`shouldBeSearchable`); `toSearchableArray` stores string `id`, `title`, and UNIX `created_at`. `SearchListings` keeps one Eloquent query and, when `q` is set, constrains it with `whereIn('id', Listing::search(...)->keys())`. Filters, publication window, sort, and pagination stay Eloquent.
+
 ### CI pipeline
 
-`[.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)` runs on push to `master`:
+[`.github/workflows/pipeline.yml`](.github/workflows/pipeline.yml) runs on push to `master`:
 
 1. Composer install
 2. `npm ci` + `npm run build`
@@ -449,23 +463,20 @@ Tests assert backend refusal (403, policy, 429), not only hidden UI. Breeze auth
 
 Deliberately not built:
 
-- Official bonuses not taken: image upload, OAuth, Scout/Meilisearch, Docker/Sail, SEO/crawler handling, observability (Pulse/Telescope), AI-assisted listing creation, feature flags (Pennant)
+- Official bonuses not taken: image upload, OAuth, Meilisearch, Docker/Sail, SEO/crawler handling, observability (Pulse/Telescope), AI-assisted listing creation, feature flags (Pennant)
 - No listing edit UI (policy `update` / `delete` exist; no Livewire surface)
 - No admin panel for KYB review (status is seeded / factory-driven)
-- Audit trail is generic, but only `CONTACT_REVEALED` is written today
-- Title search is SQL `LIKE`, not full-text search
+- Audit trail is generic, but only `CONTACT_REVEALED` is written currently
 
 ## What I Would Do Next
 
 1. Listing edit and delete
 2. Image upload on a private disk with queued variants and signed URLs
-3. Scout + Meilisearch (or Typesense) for title search
-4. Admin UI to set seller KYB status
-5. Redis for cache and queues
+3. Admin UI to set seller KYB status
+4. Redis for cache and queues
 
 ## 100x Traffic
 
 At roughly 100× this POC’s volume I would:
 
 - Move cache and queues to Redis; put built assets behind a CDN
-- Replace title search with a search engine

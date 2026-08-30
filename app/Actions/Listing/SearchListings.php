@@ -46,7 +46,7 @@ class SearchListings
                 'city',
                 'created_at',
             ])
-            ->when($title, fn (Builder $query) => $query->where('title', 'like', '%'.$title.'%'))
+            ->when($title !== '', fn (Builder $query) => $query->whereIn('id', Listing::search($title)->keys()))
             ->when(ListingCategory::tryFrom($category), fn (Builder $query, ListingCategory $category) => $query->where('category', $category))
             ->when(Country::tryFrom($country), fn (Builder $query, Country $country) => $query->where('country', $country))
             ->when($minPrice, fn (Builder $query) => $query->where('price', '>=', $minPrice * 100))

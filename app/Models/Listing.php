@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 /**
  * @property ListingStatus $status
@@ -43,12 +44,29 @@ use Illuminate\Support\Facades\Cache;
 class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
-    use HasFactory, Sluggable;
+    use HasFactory, Searchable, Sluggable;
 
     protected static function booted(): void
     {
         static::saved(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
         static::deleted(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
+    }
+
+    /**
+     * @return array{id: string, title: string, created_at: int}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (string) $this->id,
+            'title' => $this->title,
+            'created_at' => $this->created_at->getTimestamp(),
+        ];
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === ListingStatus::PUBLISHED;
     }
 
     protected function casts(): array
