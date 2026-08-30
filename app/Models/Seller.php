@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\KybStatus;
 use Database\Factories\SellerFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,20 +13,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property KybStatus $kyb_status
  */
+#[Fillable([
+    'user_id',
+    'company_name',
+    'vat_number',
+    'registration_number',
+    'contact_email',
+    'contact_phone',
+    'kyb_status',
+])]
 class Seller extends Model
 {
     /** @use HasFactory<SellerFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'user_id',
-        'company_name',
-        'vat_number',
-        'registration_number',
-        'contact_email',
-        'contact_phone',
-        'kyb_status',
-    ];
 
     protected function casts(): array
     {

@@ -9,6 +9,7 @@ use App\Enums\ListingCategory;
 use App\Enums\ListingStatus;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\ListingFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -25,6 +26,20 @@ use Illuminate\Support\Facades\Cache;
  * @property Carbon $date_offline
  * @property-read Seller $seller
  */
+#[Fillable([
+    'seller_id',
+    'title',
+    'slug',
+    'description',
+    'category',
+    'price',
+    'currency',
+    'country',
+    'city',
+    'date_online',
+    'date_offline',
+    'status',
+])]
 class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
@@ -35,21 +50,6 @@ class Listing extends Model
         static::saved(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
         static::deleted(fn () => Cache::forget(SearchListings::FILTER_OPTION_COUNTS_CACHE_KEY));
     }
-
-    protected $fillable = [
-        'seller_id',
-        'title',
-        'slug',
-        'description',
-        'category',
-        'price',
-        'currency',
-        'country',
-        'city',
-        'date_online',
-        'date_offline',
-        'status',
-    ];
 
     protected function casts(): array
     {
