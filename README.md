@@ -474,6 +474,7 @@ Deliberately not built:
 2. Image upload on a private disk with queued variants and signed URLs
 3. Admin UI to set seller KYB status
 4. Redis for cache and queues
+5. Add laravel horizon to monitor my queues
 
 ## 100x Traffic
 
