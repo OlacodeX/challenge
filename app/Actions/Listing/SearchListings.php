@@ -33,7 +33,7 @@ class SearchListings
         if ($title !== '') {
             return Listing::search($title)
                 ->query(fn (Builder $query) => $this->constrainListingSearch($query, $category, $country, $minPrice, $maxPrice, $sort))
-                ->paginate(12, page:$page)
+                ->paginate(12, page: $page)
                 ->withQueryString();
         }
 
